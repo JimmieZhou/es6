@@ -4,7 +4,7 @@
  * @Author: jimmiezhou
  * @Date: 2019-10-28 15:49:28
  * @LastEditors: jimmiezhou
- * @LastEditTime: 2019-10-28 17:11:19
+ * @LastEditTime: 2019-10-28 17:51:49
  -->
 ## 一、let和const
 ### 1.1 let
@@ -402,3 +402,196 @@ Math.trunc(-4.1) // -4
 Math.trunc(-4.9) // -4
 Math.trunc(-0.1234) // -0
 ```
+
+## 五、函数参数默认值
+### 5.1 基本用法
+```javascript
+function log(x, y = 'World') {
+  console.log(x, y);
+}
+
+log('Hello') // Hello World
+log('Hello', 'China') // Hello China
+log('Hello', '') // Hello
+```
+### 5.2 与解构赋值默认值结合使用
+```javascript
+function foo({x, y = 5}) {
+  console.log(x, y);
+}
+
+foo({}) // undefined 5
+foo({x: 1}) // 1 5
+foo({x: 1, y: 2}) // 1 2
+foo() // TypeError: Cannot read property 'x' of undefined
+```
+### 5.3 函数的 length 属性
+指定了默认值以后，函数的length属性，将返回没有指定默认值的参数个数。也就是说，指定了默认值后，length属性将失真。
+```javascript
+(function (a) {}).length // 1
+(function (a = 5) {}).length // 0
+(function (a, b, c = 5) {}).length // 2
+```
+### 5.4 rest参数
+ES6 引入 rest 参数（形式为...变量名），用于获取函数的多余参数，这样就不需要使用arguments对象了。rest 参数搭配的变量是一个数组，该变量将多余的参数放入数组中。
+```javascript
+function add(...values) {
+  let sum = 0;
+
+  for (var val of values) {
+    sum += val;
+  }
+
+  return sum;
+}
+
+add(2, 5, 3) // 10
+```
+### 5.5 name 属性
+函数的name属性，返回该函数的函数名。
+```javascript
+function foo() {}
+foo.name // "foo"
+```
+
+### 5.6 箭头函数
+ES6 允许使用“箭头”（=>）定义函数。
+```javascript
+var f = v => v;
+// 等同于
+var f = function (v) {
+  return v;
+};
+```
+如果箭头函数不需要参数或需要多个参数，就使用一个圆括号代表参数部分
+```javascript
+var f = () => 5;
+// 等同于
+var f = function () { return 5 };
+
+var sum = (num1, num2) => num1 + num2;
+// 等同于
+var sum = function(num1, num2) {
+  return num1 + num2;
+};
+```
+如果箭头函数的代码块部分多于一条语句，就要使用大括号将它们括起来，并且使用return语句返回。
+```javascript
+var sum = (num1, num2) => { 
+    let res = num1 + num2
+    return res; 
+}
+```
+由于大括号被解释为代码块，所以如果箭头函数直接返回一个对象，必须在对象外面加上括号，否则会报错。
+```javascript
+// 报错
+let getTempItem = id => { id: id, name: "Temp" };
+// 不报错
+let getTempItem = id => ({ id: id, name: "Temp" });
+```
+箭头函数可以与变量解构结合使用。
+```javascript
+const full = ({ first, last }) => first + ' ' + last;
+
+// 等同于
+function full(person) {
+  return person.first + ' ' + person.last;
+}
+```
+箭头函数使得表达更加简洁。
+```javascript
+const isEven = n => n % 2 === 0;
+const square = n => n * n;
+```
+箭头函数的一个用处是简化回调函数。
+```javascript
+// 正常函数写法
+[1,2,3].map(function (x) {
+  return x * x;
+});
+
+// 箭头函数写法
+[1,2,3].map(x => x * x);
+```
+另一个例子是
+```javascript
+// 正常函数写法
+var result = values.sort(function (a, b) {
+  return a - b;
+});
+// 箭头函数写法
+var result = values.sort((a, b) => a - b);
+```
+下面是 rest 参数与箭头函数结合的例子。
+```javascript
+const numbers = (...nums) => nums;
+numbers(1, 2, 3, 4, 5)
+// [1,2,3,4,5]
+const headAndTail = (head, ...tail) => [head, tail];
+headAndTail(1, 2, 3, 4, 5)
+// [1,[2,3,4,5]]
+```
+
+## 箭头函数使用注意！！！
+- 函数体内的this对象，就是定义时所在的对象，而不是使用时所在的对象。
+- 不可以当作构造函数，也就是说，不可以使用new命令，否则会抛出一个错误。
+- 不可以使用arguments对象，该对象在函数体内不存在。如果要用，可以用 rest 参数代替。
+- 不可以使用yield命令，因此箭头函数不能用作 Generator 函数。
+
+上面四点中，第一点尤其值得注意。this对象的指向是可变的，但是在箭头函数中，它是固定的。
+```javascript
+function foo() {
+  setTimeout(() => {
+    console.log('id:', this.id);
+  }, 100);
+}
+var id = 21;
+foo.call({ id: 42 });
+// id: 42
+```
+上面代码中，setTimeout的参数是一个箭头函数，这个箭头函数的定义生效是在foo函数生成时，而它的真正执行要等到 100 毫秒后。如果是普通函数，执行时this应该指向全局对象window，这时应该输出21。但是，箭头函数导致this总是指向函数定义生效时所在的对象（本例是{id: 42}），所以输出的是42。
+
+箭头函数可以让setTimeout里面的this，绑定定义时所在的作用域，而不是指向运行时所在的作用域。下面是另一个例子。
+```javascript
+function Timer() {
+  this.s1 = 0;
+  this.s2 = 0;
+  // 箭头函数
+  setInterval(() => this.s1++, 1000);
+  // 普通函数
+  setInterval(function () {
+    this.s2++;
+  }, 1000);
+}
+
+var timer = new Timer();
+
+setTimeout(() => console.log('s1: ', timer.s1), 3100);
+setTimeout(() => console.log('s2: ', timer.s2), 3100);
+// s1: 3
+// s2: 0
+```
+上面代码中，Timer函数内部设置了两个定时器，分别使用了箭头函数和普通函数。前者的this绑定定义时所在的作用域（即Timer函数），后者的this指向运行时所在的作用域（即全局对象）。所以，3100 毫秒之后，timer.s1被更新了 3 次，而timer.s2一次都没更新。
+
+## 不适用箭头函数场景！！！
+> 由于箭头函数使得this从“动态”变成“静态”，下面两个场合不应该使用箭头函数。
+
+第一个场合是定义对象的方法，且该方法内部包括this。
+```javascript
+const cat = {
+  lives: 9,
+  jumps: () => {
+    this.lives--;
+  }
+}
+```
+上面代码中，cat.jumps()方法是一个箭头函数，这是错误的。调用cat.jumps()时，如果是普通函数，该方法内部的this指向cat；如果写成上面那样的箭头函数，使得this指向全局对象，因此不会得到预期结果。这是因为对象不构成单独的作用域，导致jumps箭头函数定义时的作用域就是全局作用域。
+
+第二个场合是需要动态this的时候，也不应使用箭头函数。
+```javascript
+var button = document.getElementById('press');
+button.addEventListener('click', () => {
+  this.classList.toggle('on');
+});
+```
+上面代码运行时，点击按钮会报错，因为button的监听函数是一个箭头函数，导致里面的this就是全局对象。如果改成普通函数，this就会动态指向被点击的按钮对象。
