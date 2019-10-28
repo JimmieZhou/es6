@@ -4,7 +4,7 @@
  * @Author: jimmiezhou
  * @Date: 2019-10-28 15:49:28
  * @LastEditors: jimmiezhou
- * @LastEditTime: 2019-10-28 16:51:58
+ * @LastEditTime: 2019-10-28 17:11:19
  -->
 ## 一、let和const
 ### 1.1 let
@@ -350,4 +350,55 @@ const s = '  abc  ';
 s.trim() // "abc"
 s.trimStart() // "abc  "
 s.trimEnd() // "  abc"
+```
+## 四、数值的扩展
+### 4.1 Number.isFinite(), Number.isNaN() 
+```javascript
+Number.isFinite(15); // true
+Number.isFinite(0.8); // true
+Number.isFinite(NaN); // false
+Number.isFinite(Infinity); // false
+Number.isFinite(-Infinity); // false
+Number.isFinite('foo'); // false
+Number.isFinite('15'); // false
+Number.isFinite(true); // false
+```
+```javascript
+Number.isNaN(NaN) // true
+Number.isNaN(15) // false
+Number.isNaN('15') // false
+Number.isNaN(true) // false
+Number.isNaN(9/NaN) // true
+Number.isNaN('true' / 0) // true
+Number.isNaN('true' / 'true') // true
+```
+### 4.2 Number.parseInt(), Number.parseFloat() 
+ES6 将全局方法parseInt()和parseFloat()，移植到Number对象上面，行为完全保持不变。
+```javascript
+// ES5的写法
+parseInt('12.34') // 12
+parseFloat('123.45#') // 123.45
+
+// ES6的写法
+Number.parseInt('12.34') // 12
+Number.parseFloat('123.45#') // 123.45
+```
+```javascript
+Number.parseInt === parseInt // true
+Number.parseFloat === parseFloat // true
+```
+### 4.3 Number.isInteger()
+Number.isInteger()用来判断一个数值是否为整数。
+```javascript
+Number.isInteger(25) // true
+Number.isInteger(25.1) // false
+```
+### 4.4 Math.trunc()
+Math.trunc方法用于去除一个数的小数部分，返回整数部分
+```javascript
+Math.trunc(4.1) // 4
+Math.trunc(4.9) // 4
+Math.trunc(-4.1) // -4
+Math.trunc(-4.9) // -4
+Math.trunc(-0.1234) // -0
 ```
