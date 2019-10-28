@@ -4,7 +4,7 @@
  * @Author: jimmiezhou
  * @Date: 2019-10-28 15:49:28
  * @LastEditors: jimmiezhou
- * @LastEditTime: 2019-10-28 16:42:56
+ * @LastEditTime: 2019-10-28 16:51:58
  -->
 ## 一、let和const
 ### 1.1 let
@@ -307,4 +307,47 @@ let { id, status, data: number } = jsonData;
 
 console.log(id, status, number);
 // 42, "OK", [867, 5309]
+```
+
+## 三、字符串的新增方法
+### 3.1 实例方法：includes(), startsWith(), endsWith()
+- includes()：返回布尔值，表示是否找到了参数字符串。
+- startsWith()：返回布尔值，表示参数字符串是否在原字符串的头部。
+- endsWith()：返回布尔值，表示参数字符串是否在原字符串的尾部。
+```javascript
+let s = 'Hello world!';
+s.startsWith('Hello') // true
+s.endsWith('!') // true
+s.includes('o') // true
+```
+这三个方法都支持第二个参数，表示开始搜索的位置。
+```javascript
+let s = 'Hello world!';
+s.startsWith('world', 6) // true
+s.endsWith('Hello', 5) // true
+s.includes('Hello', 6) // false
+```
+### 3.2 实例方法：repeat()
+repeat方法返回一个新字符串，表示将原字符串重复n次。
+```javascript
+'x'.repeat(3) // "xxx"
+'hello'.repeat(2) // "hellohello"
+'na'.repeat(0) // ""
+```
+### 3.3 实例方法：padStart()，padEnd()
+如果某个字符串不够指定长度，会在头部或尾部补全。padStart()用于头部补全，padEnd()用于尾部补全。
+```javascript
+'x'.padStart(5, 'ab') // 'ababx'
+'x'.padStart(4, 'ab') // 'abax'
+'x'.padEnd(5, 'ab') // 'xabab'
+'x'.padEnd(4, 'ab') // 'xaba'
+```
+### 3.4 实例方法：trimStart()，trimEnd()
+trimStart()消除字符串头部的空格，trimEnd()消除尾部的空格。它们返回的都是新字符串，不会修改原始字符串。
+```javascript
+const s = '  abc  ';
+
+s.trim() // "abc"
+s.trimStart() // "abc  "
+s.trimEnd() // "  abc"
 ```
