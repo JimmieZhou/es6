@@ -4,7 +4,7 @@
  * @Author: jimmiezhou
  * @Date: 2019-4-28 15:49:28
  * @LastEditors: jimmiezhou
- * @LastEditTime: 2019-10-29 14:07:45
+ * @LastEditTime: 2019-10-29 14:55:36
  -->
 ## 一、let和const
 ### 1.1 let
@@ -1068,6 +1068,197 @@ Object.defineProperty(a, mySymbol, { value: 'Hello!' });
 // 以上写法都得到同样结果
 a[mySymbol] // "Hello!"
 ```
+
+## 九、Set和Map数据结构
+### 9.1  Set
+### 9.1.1 基本用法
+ES6 提供了新的数据结构 Set。它类似于数组，但是成员的值都是唯一的，没有重复的值。
+
+Set本身是一个构造函数，用来生成 Set 数据结构。
+```javascript
+const s = new Set();
+
+[2, 3, 5, 4, 5, 2, 2].forEach(x => s.add(x));
+
+for (let i of s) {
+  console.log(i);
+}
+// 2 3 5 4
+```
+Set函数可以接受一个数组（或者具有 iterable 接口的其他数据结构）作为参数，用来初始化。
+```javascript
+// 例一
+const set = new Set([1, 2, 3, 4, 4]);
+[...set]
+// [1, 2, 3, 4]
+
+// 例二
+const items = new Set([1, 2, 3, 4, 5, 5, 5, 5]);
+items.size // 5
+
+// 例三
+const set = new Set(document.querySelectorAll('div'));
+set.size // 56
+
+// 类似于
+const set = new Set();
+document
+ .querySelectorAll('div')
+ .forEach(div => set.add(div));
+set.size // 56
+```
+```javascript
+// 去除数组的重复成员
+[...new Set(array)]
+```
+上面的方法也可以用于，去除字符串里面的重复字符。
+```javascript
+[...new Set('ababbc')].join('')
+// "abc"
+```
+set实例具有的方法
+```javascript
+s.add(1).add(2).add(2);
+// 注意2被加入了两次
+
+s.size // 2
+
+s.has(1) // true
+s.has(2) // true
+s.has(3) // false
+
+s.delete(2);
+s.has(2) // false
+```
+Array.from方法可以将 Set 结构转为数组。
+```javascript
+const items = new Set([1, 2, 3, 4, 5]);
+const array = Array.from(items);
+```
+这就提供了去除数组重复成员的另一种方法。
+```javascript
+function dedupe(array) {
+  return Array.from(new Set(array));
+}
+
+dedupe([1, 1, 2, 3]) // [1, 2, 3]
+```
+### 9.1.2 遍历操作
+- Set.prototype.keys()：返回键名的遍历器
+- Set.prototype.values()：返回键值的遍历器
+- Set.prototype.entries()：返回键值对的遍历器
+- Set.prototype.forEach()：使用回调函数遍历每个成员
+
+```javascript
+let set = new Set(['red', 'green', 'blue']);
+
+for (let item of set.keys()) {
+  console.log(item);
+}
+// red
+// green
+// blue
+
+for (let item of set.values()) {
+  console.log(item);
+}
+// red
+// green
+// blue
+
+for (let item of set.entries()) {
+  console.log(item);
+}
+// ["red", "red"]
+// ["green", "green"]
+// ["blue", "blue"]
+```
+values方法，直接用for...of循环遍历 Set。
+```javascript
+let set = new Set(['red', 'green', 'blue']);
+
+for (let x of set) {
+  console.log(x);
+}
+// red
+// green
+// blue
+```
+```javascript
+let set = new Set([1, 4, 9]);
+set.forEach((value, key) => console.log(key + ' : ' + value))
+// 1 : 1
+// 4 : 4
+// 9 : 9
+```
+扩展运算符（...）内部使用for...of循环，所以也可以用于 Set 结构。
+```javascript
+let set = new Set(['red', 'green', 'blue']);
+let arr = [...set];
+// ['red', 'green', 'blue']
+```
+扩展运算符和 Set 结构相结合，就可以去除数组的重复成员。
+```javascript
+let arr = [3, 5, 2, 2, 5, 5];
+let unique = [...new Set(arr)];
+// [3, 5, 2]
+```
+### 9.2 WeakSet
+### 与 Set 有两个区别：
+- WeakSet 对象中只能存放对象引用, 不能存放值, 而 Set 对象都可以。
+- WeakSet 对象中存储的对象值都是被弱引用的, 如果没有其他的变量或属性引用这个对象值, 则这个对象值会被当成垃圾回收掉. 正因为这样, WeakSet 对象是无法被遍历的, 没有办法拿到它包含的所有元素。
+
+```javascript
+const ws = new WeakSet();
+ws.add(1)
+// TypeError: Invalid value used in weak set
+ws.add(Symbol())
+// TypeError: invalid value used in weak set
+```
+### 9.3 Map
+ES5中常用对象来做键值对的数据结构，但是局限在于键只能是字符串，而Map的键可以是任意类型。是一种更完美的键值对的数据结构。
+```javascript
+const m = new Map();
+const o = {p: 'Hello World'};
+
+m.set(o, 'content')
+m.get(o) // "content"
+
+m.has(o) // true
+m.delete(o) // true
+m.has(o) // false
+``` 
+Map 也可以接受一个数组作为参数。该数组的成员是一个个表示键值对的数组。
+```javascript
+const map = new Map([
+  ['name', '张三'],
+  ['title', 'Author']
+]);
+
+map.size // 2
+map.has('name') // true
+map.get('name') // "张三"
+map.has('title') // true
+map.get('title') // "Author"
+```
+### 9.3.1 实例的属性和操作方法 
+- size 属性
+- Map.prototype.set(key, value)
+- Map.prototype.get(key)
+- Map.prototype.has(key)
+- Map.prototype.delete(key)
+- Map.prototype.clear()
+### 9.3.2 遍历方法
+- Map.prototype.keys()：返回键名的遍历器。
+- Map.prototype.values()：返回键值的遍历器。
+- Map.prototype.entries()：返回所有成员的遍历器。
+- Map.prototype.forEach()：遍历 Map 的所有成员。
+### 9.4 WeakMap
+### 与 Map 有两个区别：
+- WeakMap 只接受对象作为键名
+- WeakMap 对象中存储的对象值都是被弱引用的, 如果没有其他的变量或属性引用这个对象值, 则这个对象值会被当成垃圾回收掉. 正因为这样, WeakMap 对象是无法被遍历的, 没有办法拿到它包含的所有元素。
+
+
 
 
 
