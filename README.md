@@ -4,7 +4,7 @@
  * @Author: jimmiezhou
  * @Date: 2019-4-28 15:49:28
  * @LastEditors: jimmiezhou
- * @LastEditTime: 2019-10-29 13:55:05
+ * @LastEditTime: 2019-10-29 14:07:45
  -->
 ## 一、let和const
 ### 1.1 let
@@ -1035,6 +1035,40 @@ Object.fromEntries([
 ])
 // { foo: "bar", baz: 42 }
 ```
+
+## 八、Symbol
+解决ES5中对象的属性重复的问题，引入Symbol解决对象的属性是独一无二的。
+
+所以，js中总共出现了6种基本数据类型：number string undefiend null boolean Symbol。
+
+凡是属性名属于 Symbol 类型，就都是独一无二的，可以保证不会与其他属性名产生冲突。
+```javascript
+let s = Symbol();
+
+typeof s
+// "symbol"
+```
+## 8.1 symbol作为属性名
+```javascript
+let mySymbol = Symbol();
+
+// 第一种写法
+let a = {};
+a[mySymbol] = 'Hello!';
+
+// 第二种写法
+let a = {
+  [mySymbol]: 'Hello!'
+};
+
+// 第三种写法
+let a = {};
+Object.defineProperty(a, mySymbol, { value: 'Hello!' });
+
+// 以上写法都得到同样结果
+a[mySymbol] // "Hello!"
+```
+
 
 
 
