@@ -4,7 +4,7 @@
  * @Author: jimmiezhou
  * @Date: 2019-4-28 15:49:28
  * @LastEditors: jimmiezhou
- * @LastEditTime: 2019-10-29 11:18:17
+ * @LastEditTime: 2019-10-29 13:55:05
  -->
 ## 一、let和const
 ### 1.1 let
@@ -936,4 +936,105 @@ flatMap()只能展开一层数组。
 [1, 2, 3, 4].flatMap(x => [[x * 2]])
 // [[2], [4], [6], [8]]
 ```
+
+## 七、对象新增方法
+### 7.1 Object.is()
+Object.is就是部署这个算法的新方法。它用来比较两个值是否严格相等，与严格比较运算符（===）的行为基本一致。
+```javascript
+Object.is('foo', 'foo')
+// true
+Object.is({}, {})
+// false
+```
+不同之处只有两个：一是+0不等于-0，二是NaN等于自身。
+```javascript
++0 === -0 //true
+NaN === NaN // false
+
+Object.is(+0, -0) // false
+Object.is(NaN, NaN) // true
+```
+### 7.2 Object.assign() 
+#### 7.2.1 基本用法
+Object.assign方法用于对象的合并，将源对象（source）的所有可枚举属性，复制到目标对象（target）。
+```javascript
+const target = { a: 1 };
+
+const source1 = { b: 2 };
+const source2 = { c: 3 };
+
+Object.assign(target, source1, source2);
+target // {a:1, b:2, c:3}
+```
+#### 7.2.2 注意点
+（1）浅拷贝
+
+Object.assign方法实行的是浅拷贝，而不是深拷贝。也就是说，如果源对象某个属性的值是对象，那么目标对象拷贝得到的是这个对象的引用。
+```javascript
+const obj1 = {a: {b: 1}};
+const obj2 = Object.assign({}, obj1);
+
+obj1.a.b = 2;
+obj2.a.b // 2
+```
+上面代码中，源对象obj1的a属性的值是一个对象，Object.assign拷贝得到的是这个对象的引用。这个对象的任何变化，都会反映到目标对象上面。
+
+（2）同名属性的替换
+
+对于这种嵌套的对象，一旦遇到同名属性，Object.assign的处理方法是替换，而不是添加。
+```javascript
+const target = { a: { b: 'c', d: 'e' } }
+const source = { a: { b: 'hello' } }
+Object.assign(target, source)
+// { a: { b: 'hello' } }
+```
+### 7.3 Object.keys()，Object.values()，Object.entries()
+### 7.3.1 Object.keys()
+ES5 引入了Object.keys方法，返回一个数组，成员是参数对象自身的（不含继承的）所有可遍历（enumerable）属性的键名。
+```javascript
+var obj = { foo: 'bar', baz: 42 };
+Object.keys(obj)
+// ["foo", "baz"]
+```
+ES2017 引入了跟Object.keys配套的Object.values和Object.entries，作为遍历一个对象的补充手段，供for...of循环使用。
+```javascript
+let {keys, values, entries} = Object;
+let obj = { a: 1, b: 2, c: 3 };
+
+for (let key of keys(obj)) {
+  console.log(key); // 'a', 'b', 'c'
+}
+
+for (let value of values(obj)) {
+  console.log(value); // 1, 2, 3
+}
+
+for (let [key, value] of entries(obj)) {
+  console.log([key, value]); // ['a', 1], ['b', 2], ['c', 3]
+}
+```
+### 7.3.2 Object.values()
+```javascript
+const obj = { foo: 'bar', baz: 42 };
+Object.values(obj)
+// ["bar", 42]
+```
+### 7.3.3 Object.entries()
+Object.entries()方法返回一个数组，成员是参数对象自身的（不含继承的）所有可遍历（enumerable）属性的键值对数组。
+```javascript
+const obj = { foo: 'bar', baz: 42 };
+Object.entries(obj)
+// [ ["foo", "bar"], ["baz", 42] ]
+```
+### 7.3.4 Object.fromEntries() 
+Object.fromEntries()方法是Object.entries()的逆操作，用于将一个键值对数组转为对象。
+```javascript
+Object.fromEntries([
+  ['foo', 'bar'],
+  ['baz', 42]
+])
+// { foo: "bar", baz: 42 }
+```
+
+
 
