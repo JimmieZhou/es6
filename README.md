@@ -4,7 +4,7 @@
  * @Author: jimmiezhou
  * @Date: 2019-4-28 15:49:28
  * @LastEditors: jimmiezhou
- * @LastEditTime: 2019-10-30 14:58:17
+ * @LastEditTime: 2019-10-30 15:11:00
  -->
 ## 一、let和const
 ### 1.1 let
@@ -1840,5 +1840,82 @@ async function asyncPrint(value, ms) {
 }
 
 asyncPrint('hello world', 50);
+```
+### 14.3 语法
+### 返回Promise对象
+async函数返回一个 Promise 对象。
+
+async函数内部return语句返回的值，会成为then方法回调函数的参数。
+```javascript
+async function f() {
+  return 'hello world';
+}
+
+f().then(v => console.log(v))
+// "hello world"
+```
+```javascript
+async function f() {
+  throw new Error('出错了');
+}
+
+f().then(
+  v => console.log(v),
+  e => console.log(e)
+)
+// Error: 出错了
+```
+### await命令
+```javascript
+async function f() {
+  // 等同于
+  // return 123;
+  return await 123;
+}
+
+f().then(v => console.log(v))
+// 123
+```
+一个简化版的sleep实现
+```javascript
+function sleep(interval) {
+  return new Promise(resolve => {
+    setTimeout(resolve, interval);
+  })
+}
+
+// 用法
+async function one2FiveInAsync() {
+  for(let i = 1; i <= 5; i++) {
+    console.log(i);
+    await sleep(1000);
+  }
+}
+
+one2FiveInAsync();
+```
+await命令后面的 Promise 对象如果变为reject状态，则reject的参数会被catch方法的回调函数接收到。
+```javascript
+async function f() {
+  await Promise.reject('出错了');
+}
+
+f()
+.then(v => console.log(v))
+.catch(e => console.log(e))
+// 出错了
+```
+### 错误处理
+```javascript
+async function f() {
+  await new Promise(function (resolve, reject) {
+    throw new Error('出错了');
+  });
+}
+
+f()
+.then(v => console.log(v))
+.catch(e => console.log(e))
+// Error：出错了
 ```
 
