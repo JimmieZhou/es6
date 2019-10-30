@@ -4,7 +4,7 @@
  * @Author: jimmiezhou
  * @Date: 2019-4-28 15:49:28
  * @LastEditors: jimmiezhou
- * @LastEditTime: 2019-10-29 17:31:33
+ * @LastEditTime: 2019-10-30 09:33:31
  -->
 ## 一、let和const
 ### 1.1 let
@@ -1607,12 +1607,20 @@ Promise.all([p1, p2])
 .catch(e => console.log(e));
 // Error: 报错了
 ```
+### 12.7 Promise.race() 
+Promise.race()方法同样是将多个 Promise 实例，包装成一个新的 Promise 实例。
+```javascript
+const p = Promise.race([p1, p2, p3]);
+```
+上面代码中，只要p1、p2、p3之中有一个实例率先改变状态，p的状态就跟着改变。那个率先改变的 Promise 实例的返回值，就传递给p的回调函数。
+```javascript
+const p = Promise.race([
+  fetch('/resource-that-may-take-a-while'),
+  new Promise(function (resolve, reject) {
+    setTimeout(() => reject(new Error('request timeout')), 5000)
+  })
+]);
 
-
-
-
-
-
-
-
-
+p.then(console.log).catch(console.error);
+```
+上面代码中，如果 5 秒之内fetch方法无法返回结果，变量p的状态就会变为rejected，从而触发catch方法指定的回调函数。
